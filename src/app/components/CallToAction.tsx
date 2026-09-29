@@ -1,9 +1,18 @@
 import { motion } from 'motion/react';
 import { ArrowRight, ShoppingCart, Bell } from 'lucide-react';
+import { FormEvent, useState } from 'react';
 
 export function CallToAction() {
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleSubscribe = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubscribed(true);
+  };
+
   return (
-    <section className="relative py-32 bg-gradient-to-b from-black via-gray-950 to-black overflow-hidden">
+    <section id="drop" className="relative py-32 bg-gradient-to-b from-black via-gray-950 to-black overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
         <motion.div
@@ -64,6 +73,7 @@ export function CallToAction() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => document.getElementById('product')?.scrollIntoView({ behavior: 'smooth' })}
               className="group relative px-12 py-6 bg-white text-black text-lg font-black uppercase tracking-wider overflow-hidden hover:bg-orange-500 transition-colors duration-300"
             >
               <span className="relative z-10 flex items-center gap-3">
@@ -75,6 +85,7 @@ export function CallToAction() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => window.open('https://www.nike.com/w/locations', '_blank', 'noopener,noreferrer')}
               className="group px-12 py-6 bg-transparent border-2 border-white text-white text-lg font-black uppercase tracking-wider hover:bg-white hover:text-black transition-all duration-300"
             >
               <span className="flex items-center gap-3">
@@ -113,10 +124,17 @@ export function CallToAction() {
               Be the first to know about exclusive drops, athlete stories, and special offers.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4">
               <input
                 type="email"
                 placeholder="Enter your email"
+                value={email}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                  setSubscribed(false);
+                }}
+                required
+                aria-label="Email address"
                 className="flex-1 px-6 py-4 bg-black border border-gray-800 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition-colors duration-300"
               />
               <motion.button
@@ -124,12 +142,14 @@ export function CallToAction() {
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-4 bg-orange-500 text-white font-black uppercase tracking-wider hover:bg-orange-600 transition-colors duration-300"
               >
-                Subscribe
+                {subscribed ? 'Subscribed' : 'Subscribe'}
               </motion.button>
-            </div>
+            </form>
 
-            <p className="text-xs text-gray-500 mt-4">
-              By subscribing, you agree to receive marketing emails from Nike. Unsubscribe at any time.
+            <p role="status" className="text-xs text-gray-500 mt-4">
+              {subscribed
+                ? `You're on the list. Updates will be sent to ${email}.`
+                : 'By subscribing, you agree to receive marketing emails from Nike. Unsubscribe at any time.'}
             </p>
           </div>
         </motion.div>

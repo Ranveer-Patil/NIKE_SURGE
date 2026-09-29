@@ -23,6 +23,9 @@ const shoes = [
 export function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [activeShoe, setActiveShoe] = useState(0);
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <section
@@ -100,13 +103,21 @@ export function Hero() {
           </div>
           {/* Nav pills */}
           <div className="hidden md:flex items-center gap-8 text-xs tracking-[0.25em] text-white/40 uppercase">
-            {['Product', 'Story', 'Flavors', 'Drop'].map(item => (
-              <span key={item} className="hover:text-white cursor-pointer transition-colors duration-200">{item}</span>
+            {[
+              ['Product', 'product'],
+              ['Story', 'story'],
+              ['Flavors', 'flavors'],
+              ['Drop', 'drop'],
+            ].map(([item, id]) => (
+              <button type="button" key={item} onClick={() => scrollTo(id)} className="hover:text-white cursor-pointer transition-colors duration-200">
+                {item}
+              </button>
             ))}
           </div>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => scrollTo('drop')}
             className="border border-white/20 text-white text-xs tracking-[0.2em] uppercase px-5 py-2.5 transition-all duration-300 hover:bg-orange-500 hover:border-orange-500"
           >
             Get Yours
@@ -183,6 +194,7 @@ export function Hero() {
               <motion.button
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
+                onClick={() => scrollTo('product')}
                 className="bg-orange-500 hover:bg-orange-600 text-white text-sm tracking-[0.2em] uppercase font-black px-10 py-4 transition-all duration-300 shadow-[0_0_40px_rgba(249,115,22,0.4)]"
               >
                 Shop Now
@@ -190,6 +202,7 @@ export function Hero() {
               <motion.button
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
+                onClick={() => scrollTo('story')}
                 className="border border-white/20 hover:border-white/60 text-white text-sm tracking-[0.2em] uppercase font-black px-10 py-4 transition-all duration-300 backdrop-blur-sm"
               >
                 Watch Film

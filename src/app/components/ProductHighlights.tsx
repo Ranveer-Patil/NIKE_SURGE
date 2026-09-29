@@ -59,7 +59,7 @@ export function ProductHighlights() {
   const flavor = flavors[activeFlavor];
 
   return (
-    <section className="relative py-32 bg-gradient-to-b from-black via-gray-950 to-black overflow-hidden">
+    <section id="product" className="relative py-32 bg-gradient-to-b from-black via-gray-950 to-black overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 opacity-10">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
