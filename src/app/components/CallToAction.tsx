@@ -1,20 +1,51 @@
+﻿import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, ShoppingCart, Bell } from 'lucide-react';
-import { FormEvent, useState } from 'react';
+import { ArrowRight, ShoppingCart, Bell, Sparkles, CheckCircle2, ShieldAlert, Loader2 } from 'lucide-react';
 
-export function CallToAction() {
+interface CallToActionProps {
+  onOpenPreOrder: () => void;
+  onOpenStoreLocator: () => void;
+}
+
+export function CallToAction({ onOpenPreOrder, onOpenStoreLocator }: CallToActionProps) {
   const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubscribe = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubscribe = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSubscribed(true);
+    if (subscribed || isSubmitting) return;
+
+    const trimmed = email.trim();
+    if (!trimmed) {
+      setErrorMessage('Please enter your email address.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmed)) {
+      setErrorMessage('Please enter a valid email address (e.g. athlete@example.com).');
+      return;
+    }
+
+    setErrorMessage('');
+    setIsSubmitting(true);
+
+    // Simulate safe client-side processing without sending data to external APIs
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubscribed(true);
+    }, 1100);
   };
 
   return (
-    <section id="drop" className="relative py-32 bg-gradient-to-b from-black via-gray-950 to-black overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0">
+    <section
+      id="drop"
+      className="relative py-28 md:py-36 bg-gradient-to-b from-black via-zinc-950 to-black overflow-hidden scroll-mt-12"
+    >
+      {/* Animated Background Gradients */}
+      <div className="absolute inset-0 pointer-events-none">
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
@@ -41,171 +72,177 @@ export function CallToAction() {
         />
       </div>
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-6 md:px-12 relative z-10">
         {/* Main CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
           className="text-center mb-20"
         >
-          <motion.h2
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-5xl md:text-8xl font-black mb-8 uppercase leading-tight"
-          >
+          <div className="inline-flex items-center gap-2 mb-4 px-3.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-bold uppercase tracking-widest">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Limited Batch Simulation</span>
+          </div>
+
+          <h2 className="text-4xl sm:text-6xl md:text-8xl font-black mb-6 uppercase leading-tight tracking-tight text-white">
             Ready To
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-red-500 to-cyan-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-amber-400 to-cyan-400">
               Surge Ahead?
             </span>
-          </motion.h2>
-          
-          <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto">
-            Join thousands of athletes who are already experiencing the future of energy.
+          </h2>
+
+          <p className="text-sm md:text-xl text-white/50 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Experience the future of sneaker-inspired energy. Reserve your demo collector pack or locate sample retail stock points.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => document.getElementById('product')?.scrollIntoView({ behavior: 'smooth' })}
-              className="group relative px-12 py-6 bg-white text-black text-lg font-black uppercase tracking-wider overflow-hidden hover:bg-orange-500 transition-colors duration-300"
+              type="button"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={onOpenPreOrder}
+              className="group px-10 py-4.5 bg-orange-500 hover:bg-orange-600 text-white text-xs md:text-sm font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-300 shadow-[0_0_35px_rgba(249,115,22,0.45)] flex items-center gap-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-400"
             >
-              <span className="relative z-10 flex items-center gap-3">
-                Pre-Order Now
-                <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
-              </span>
+              <span>Pre-Order Now</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
             </motion.button>
 
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => window.open('https://www.nike.com/w/locations', '_blank', 'noopener,noreferrer')}
-              className="group px-12 py-6 bg-transparent border-2 border-white text-white text-lg font-black uppercase tracking-wider hover:bg-white hover:text-black transition-all duration-300"
+              type="button"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={onOpenStoreLocator}
+              className="px-10 py-4.5 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/50 text-white text-xs md:text-sm font-bold uppercase tracking-[0.2em] rounded-xl transition-all duration-300 flex items-center gap-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-white"
             >
-              <span className="flex items-center gap-3">
-                <ShoppingCart className="w-6 h-6" />
-                Find Stores
-              </span>
+              <ShoppingCart className="w-4 h-4 text-orange-400" />
+              <span>Find Stores (Demo)</span>
             </motion.button>
           </div>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-sm text-gray-500 uppercase tracking-wider"
-          >
-            Limited Edition Launch • March 17, 2026
-          </motion.p>
+          <p className="text-xs text-white/40 uppercase tracking-widest font-mono">
+            Limited Edition Launch Drop • Concept Release 2026
+          </p>
         </motion.div>
 
-        {/* Email Signup */}
+        {/* Email Signup Form Card */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="max-w-2xl mx-auto"
         >
-          <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-lg p-8 md:p-12">
-            <div className="flex items-center gap-3 mb-6">
-              <Bell className="w-8 h-8 text-orange-500" />
-              <h3 className="text-2xl md:text-3xl font-black uppercase">Stay Updated</h3>
+          <div className="bg-zinc-950 border border-white/15 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
+
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-xl bg-orange-500/20 border border-orange-500/40 flex items-center justify-center text-orange-400">
+                <Bell className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-xl md:text-2xl font-black uppercase text-white tracking-tight">
+                  Get On The Drop List
+                </h3>
+                <span className="text-[10px] text-orange-400 font-bold uppercase tracking-wider font-mono">
+                  Priority Concept Access
+                </span>
+              </div>
             </div>
-            
-            <p className="text-gray-400 mb-6">
-              Be the first to know about exclusive drops, athlete stories, and special offers.
+
+            <p className="text-white/60 text-xs md:text-sm mb-6 leading-relaxed">
+              Subscribe to test the frontend drop alert simulation. Receive instant mock reservation confirmations for future colorway drops.
             </p>
 
-            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(event) => {
-                  setEmail(event.target.value);
-                  setSubscribed(false);
-                }}
-                required
-                aria-label="Email address"
-                className="flex-1 px-6 py-4 bg-black border border-gray-800 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition-colors duration-300"
-              />
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-orange-500 text-white font-black uppercase tracking-wider hover:bg-orange-600 transition-colors duration-300"
-              >
-                {subscribed ? 'Subscribed' : 'Subscribe'}
-              </motion.button>
+            <form onSubmit={handleSubscribe} className="space-y-3" noValidate>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <input
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={email}
+                    disabled={isSubmitting || subscribed}
+                    onChange={(event) => {
+                      setEmail(event.target.value);
+                      if (errorMessage) setErrorMessage('');
+                    }}
+                    aria-label="Email address for drop notifications"
+                    className={`w-full px-5 py-3.5 bg-black border text-white placeholder-white/30 text-xs rounded-xl focus:outline-none transition-colors ${
+                      errorMessage
+                        ? 'border-red-500 focus:border-red-500'
+                        : 'border-white/20 focus:border-orange-500'
+                    } ${subscribed ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  />
+                  {errorMessage && (
+                    <p className="text-red-400 text-[11px] mt-1.5 font-medium">{errorMessage}</p>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting || subscribed}
+                  className={`px-8 py-3.5 text-xs font-black uppercase tracking-[0.15em] rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shrink-0 cursor-pointer ${
+                    subscribed
+                      ? 'bg-emerald-600 text-white cursor-default'
+                      : 'bg-orange-500 hover:bg-orange-600 disabled:opacity-60 text-white shadow-[0_0_20px_rgba(249,115,22,0.35)]'
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Verifying...</span>
+                    </>
+                  ) : subscribed ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Subscribed</span>
+                    </>
+                  ) : (
+                    <span>Subscribe</span>
+                  )}
+                </button>
+              </div>
             </form>
 
-            <p role="status" className="text-xs text-gray-500 mt-4">
-              {subscribed
-                ? `You're on the list. Updates will be sent to ${email}.`
-                : 'By subscribing, you agree to receive marketing emails from Nike. Unsubscribe at any time.'}
-            </p>
-          </div>
-        </motion.div>
+            {/* Status Feedback Message */}
+            <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between gap-4 text-xs">
+              <div className="flex items-center gap-2">
+                {subscribed ? (
+                  <span className="text-emerald-400 font-bold flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4" />
+                    You're on the SURGE list.
+                  </span>
+                ) : (
+                  <span className="text-white/40 text-[11px]">
+                    Instant client-side confirmation • No external data transmission
+                  </span>
+                )}
+              </div>
 
-        {/* Social Proof */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="mt-20 grid md:grid-cols-3 gap-8"
-        >
-          {[
-            {
-              quote: "SURGE changed my game completely. The energy is instant and lasts through my entire training session.",
-              author: "Marcus J.",
-              role: "Professional Basketball Player"
-            },
-            {
-              quote: "Finally, an energy drink that doesn't compromise on taste or performance. Nike nailed it.",
-              author: "Sarah L.",
-              role: "Marathon Runner"
-            },
-            {
-              quote: "The zero-crash formula is a game changer. I feel energized without the jitters or afternoon slump.",
-              author: "David K.",
-              role: "CrossFit Athlete"
-            }
-          ].map((testimonial, index) => (
-            <div key={index} className="p-6 bg-black border border-gray-800 rounded-lg hover:border-orange-500/50 transition-colors duration-300">
-              <div className="mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <span key={i} className="text-orange-500 text-xl">★</span>
-                ))}
-              </div>
-              <p className="text-gray-300 mb-4 italic">"{testimonial.quote}"</p>
-              <div>
-                <p className="font-black">{testimonial.author}</p>
-                <p className="text-sm text-gray-500">{testimonial.role}</p>
-              </div>
+              {subscribed && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubscribed(false);
+                    setEmail('');
+                  }}
+                  className="text-white/40 hover:text-white text-[11px] underline cursor-pointer"
+                >
+                  Reset form
+                </button>
+              )}
             </div>
-          ))}
-        </motion.div>
 
-        {/* Final Push */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-20 text-center"
-        >
-          <h3 className="text-4xl md:text-6xl font-black mb-4 uppercase">
-            Just Do It.
-          </h3>
-          <p className="text-xl text-gray-400">Fuel your greatness with SURGE.</p>
+            <div className="mt-3 flex items-center gap-2 text-[10px] text-white/30">
+              <ShieldAlert className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+              <span>
+                Demo frontend subscription only — no marketing spam or external transmission.
+              </span>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>
